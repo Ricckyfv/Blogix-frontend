@@ -1,0 +1,44 @@
+@if (isOpen) {
+  <div class="fixed inset-0 z-[100] flex items-center justify-center p-4">
+    <!-- Backdrop overlay with transition -->
+    <div class="fixed inset-0 bg-black/40 dark:bg-black/60 backdrop-blur-md transition-opacity duration-300" (click)="onCancel()"></div>
+    
+    <!-- Modal panel with modern premium styling -->
+    <div class="relative w-full max-w-md transform overflow-hidden rounded-2xl border border-outline-variant/60 bg-white p-6 shadow-2xl transition-all duration-300 dark:bg-surface-bright dark:border-outline/30 animate-[scaleUp_0.2s_ease-out]">
+      
+      <!-- Warning Icon / Header -->
+      <div class="flex items-center space-x-3 mb-4">
+        <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-error/10 text-error dark:bg-error/20">
+          <span class="material-symbols-outlined text-2xl font-bold">warning</span>
+        </div>
+        <h3 class="text-lg font-extrabold tracking-tight text-on-surface">
+          {{ title }}
+        </h3>
+      </div>
+      
+      <!-- Description message -->
+      <div class="mb-6">
+        <p class="text-sm font-semibold text-on-surface-variant">
+          {{ message }}
+        </p>
+      </div>
+      
+      <!-- Action buttons -->
+      <div class="flex justify-end space-x-3">
+        <button 
+          type="button" 
+          (click)="onCancel()" 
+          class="inline-flex h-10 items-center justify-center rounded-full border border-outline-variant/60 px-5 text-sm font-semibold text-on-surface hover:bg-surface-container transition-all cursor-pointer dark:border-outline/40 dark:text-on-surface">
+          {{ cancelText }}
+        </button>
+        
+        <button 
+          type="button" 
+          (click)="onConfirm()" 
+          class="inline-flex h-10 items-center justify-center rounded-full bg-error px-5 text-sm font-semibold text-white hover:scale-[1.02] active:scale-[0.98] transition-all cursor-pointer border-none shadow-md shadow-error/15">
+          {{ confirmText }}
+        </button>
+      </div>
+    </div>
+  </div>
+}

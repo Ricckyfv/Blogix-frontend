@@ -1,0 +1,153 @@
+<div class="flex items-center justify-center p-4 md:p-8 w-full max-w-container-max mx-auto py-8">
+  <div class="glass-panel rounded-xl w-full max-w-4xl overflow-hidden flex flex-col md:flex-row relative z-10 bg-slate-900/60 border border-slate-800/80 shadow-2xl">
+
+    <!-- Left Side: Graphic / Branding -->
+    <div class="hidden md:flex md:w-5/12 bg-slate-950 relative overflow-hidden flex-col justify-between p-10 border-r border-slate-850">
+      <div class="absolute inset-0 z-0">
+        <img alt="Abstract visual art representing clarity and ordered inspiration"
+             class="w-full h-full object-cover opacity-60"
+             src="https://lh3.googleusercontent.com/aida-public/AB6AXuDX9wAC5c7r8t_i7tYiczJSMFEKQA0TEuVPT4vS04uaYKPV_m84PIbvdr9mAtjQiKdJkKNb6RyfScWzToAtgCwFV7wrP7wIB-NrKSSdKyd2Qyy0x0e1vvB_TB0Z8f4SyA7vD3oTixSKC4tMeq-J8s0gvoqNcvpCzcqB6oTlgZACjsHu40-w7rR8kHyQHMxP-YadsT_CCbgHT_lGaZ7iBYghmmRz3GzEVJvhrsChfzO1ZpCTyjlonvGPmPeKNOQ7MoAN92wwTD0QYA"/>
+        <div class="absolute inset-0 bg-gradient-to-b from-primary/30 to-secondary/40 mix-blend-multiply"></div>
+      </div>
+      <div class="relative z-10">
+        <a class="font-display-xl text-4xl tracking-tighter text-white font-extrabold drop-shadow-md" href="#">Blogix</a>
+      </div>
+      <div class="relative z-10 mt-auto">
+        <h2 class="font-headline-lg text-2xl font-bold text-white mb-4 drop-shadow-md">Begin your journey of ordered inspiration.</h2>
+        <p class="font-body-md text-sm text-white/80 drop-shadow-md">Join a community of digital creators and professional storytellers.</p>
+      </div>
+    </div>
+
+    <!-- Right Side: Registration Form -->
+    <div class="w-full md:w-7/12 bg-slate-900 p-6 md:p-10 text-slate-200">
+      <div class="mb-6">
+        <h1 class="font-headline-lg text-2xl font-bold text-slate-100 mb-2">Create an account</h1>
+        <p class="font-body-md text-sm text-slate-400">
+          Already have an account?
+          <a class="text-primary font-bold hover:underline" routerLink="/login">Log In</a>
+        </p>
+      </div>
+
+      <!-- Error Message Box -->
+      @if (errorMessage) {
+        <div class="mb-6 p-4 bg-error/10 border border-error/30 text-error rounded-lg text-sm font-semibold flex items-center gap-2">
+          <span class="material-symbols-outlined text-[18px]">error</span>
+          <span>{{ errorMessage }}</span>
+        </div>
+      }
+
+      <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="space-y-5">
+
+        <!-- Nombre Completo & Fecha de Nacimiento -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="relative input-animated pt-5">
+            <input class="block w-full text-sm placeholder-transparent text-slate-200"
+                   id="fullName"
+                   placeholder=" "
+                   type="text"
+                   formControlName="name"/>
+            <label class="absolute left-0 top-7 font-body-md text-sm text-slate-400 pointer-events-none" for="fullName">Full Name</label>
+          </div>
+
+          <div class="relative input-animated pt-5">
+            <input class="block w-full text-sm placeholder-transparent text-slate-200"
+                   id="birthDate"
+                   placeholder=" "
+                   type="date"
+                   formControlName="birthDate"/>
+            <label class="absolute left-0 top-7 font-body-md text-sm text-slate-400 pointer-events-none" for="birthDate">Birth Date</label>
+          </div>
+        </div>
+
+        <!-- Descripción del usuario -->
+        <div class="relative input-animated pt-5">
+          <input class="block w-full text-sm placeholder-transparent text-slate-200"
+                 id="description"
+                 placeholder=" "
+                 type="text"
+                 formControlName="description"/>
+          <label class="absolute left-0 top-7 font-body-md text-sm text-slate-400 pointer-events-none" for="description">Author Description (will show in your posts)</label>
+        </div>
+
+        <!-- Foto Elegida: Avatar preset picker & Custom Uploader -->
+        <div class="pt-2">
+          <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Select your Photo / Avatar Preset</label>
+
+          <div class="flex items-center gap-4 mb-3">
+            <!-- Current Photo Preview -->
+            <div class="h-16 w-16 rounded-full overflow-hidden border-2 border-primary bg-slate-950 flex items-center justify-center shrink-0">
+              <img [src]="registerForm.get('profileImage')?.value" alt="Preview Avatar" class="h-full w-full object-cover" />
+            </div>
+            <div class="text-xs">
+              <p class="font-bold text-slate-200">Your author image</p>
+              <p class="text-slate-400">Choose from presets or upload a custom image file.</p>
+              <!-- Custom File Uploader -->
+              <label class="mt-1.5 inline-flex items-center gap-1 text-primary hover:text-secondary cursor-pointer font-bold select-none">
+                <span class="material-symbols-outlined text-[16px]">upload</span>
+                Upload custom photo
+                <input class="hidden" type="file" (change)="onFileSelected($event)" accept="image/*" />
+              </label>
+            </div>
+          </div>
+
+          <!-- Presets Grid -->
+          <div class="grid grid-cols-6 gap-2">
+            @for (avatar of avatars; track avatar) {
+              <button type="button"
+                      (click)="selectAvatar(avatar)"
+                      [class]="registerForm.get('profileImage')?.value === avatar
+                        ? 'border-2 border-primary bg-primary/10 rounded-lg p-1 transition-all scale-105 shadow-sm'
+                        : 'border border-slate-800 hover:border-primary/50 rounded-lg p-1 hover:bg-slate-850 transition-all'"
+                      class="flex items-center justify-center cursor-pointer">
+                <img [src]="avatar" alt="Avatar preset" class="w-10 h-10 object-cover rounded-md" />
+              </button>
+            }
+          </div>
+        </div>
+
+        <!-- Email & Password -->
+        <div class="relative input-animated pt-5">
+          <input class="block w-full text-sm placeholder-transparent text-slate-200"
+                 id="email"
+                 placeholder=" "
+                 type="email"
+                 formControlName="email"/>
+          <label class="absolute left-0 top-7 font-body-md text-sm text-slate-400 pointer-events-none" for="email">Email Address</label>
+        </div>
+
+        <div class="relative input-animated pt-5">
+          <input class="block w-full text-sm placeholder-transparent text-slate-200"
+                 id="password"
+                 placeholder=" "
+                 type="password"
+                 formControlName="password"/>
+          <label class="absolute left-0 top-7 font-body-md text-sm text-slate-400 pointer-events-none" for="password">Password</label>
+        </div>
+
+        <!-- Terms checkbox -->
+        <div class="flex items-start gap-2 pt-2">
+          <input class="w-4 h-4 rounded border-slate-800 text-primary focus:ring-primary focus:ring-offset-0 bg-transparent mt-0.5 cursor-pointer"
+                 id="terms"
+                 type="checkbox"
+                 formControlName="acceptedTerms"/>
+          <label class="font-body-md text-xs text-slate-400 leading-tight" for="terms">
+            I accept the <a class="text-primary font-bold hover:underline" href="#">Terms of Service</a> and the <a class="text-primary font-bold hover:underline" href="#">Privacy Policy</a>.
+          </label>
+        </div>
+
+        <!-- Submit Button -->
+        <button class="w-full btn-gradient text-white rounded-lg py-3 font-bold text-sm flex items-center justify-center gap-2 shadow-sm shadow-primary/20 hover:scale-[1.01] active:scale-[0.99] disabled:opacity-50 disabled:pointer-events-none transition-all cursor-pointer border-none"
+                type="submit"
+                [disabled]="isLoading || registerForm.invalid">
+          @if (isLoading) {
+            <span class="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent shrink-0"></span>
+            Creating account...
+          } @else {
+            Create Account & Log In
+            <span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+          }
+        </button>
+      </form>
+    </div>
+  </div>
+</div>

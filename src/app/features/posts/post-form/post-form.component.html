@@ -1,0 +1,239 @@
+<div class="max-w-4xl mx-auto py-6 px-4">
+ 
+  <div class="mb-8">
+    <a [routerLink]="isEditMode ? ['/posts', postId] : ['/posts']" class="inline-flex items-center space-x-2 text-sm font-semibold text-slate-400 hover:text-primary transition-colors cursor-pointer">
+      <span class="material-symbols-outlined text-[18px]">arrow_back</span>
+      <span>Cancel and Go Back</span>
+    </a>
+  </div>
+ 
+  @if (isLoading) {
+    <div class="animate-pulse space-y-6">
+      <div class="h-10 w-2/3 rounded bg-slate-900/40"></div>
+      <div class="h-12 w-full rounded bg-slate-900/40"></div>
+      <div class="h-64 w-full rounded bg-slate-900/40"></div>
+    </div>
+  } @else {
+ 
+    <div class="relative overflow-hidden rounded-3xl border border-slate-800/80 bg-slate-900/60 p-8 sm:p-12 shadow-xl text-slate-200">
+ 
+      <div class="absolute -right-24 -top-24 h-80 w-80 rounded-full bg-primary/5 blur-3xl"></div>
+      <div class="absolute -left-24 -bottom-24 h-80 w-80 rounded-full bg-secondary/5 blur-3xl"></div>
+ 
+      <div class="relative z-10 mb-8 border-b border-slate-800/60 pb-6">
+        <h1 class="text-3xl font-extrabold tracking-tight text-slate-100">
+          {{ isEditMode ? 'Edit Post' : 'Write Post' }}
+        </h1>
+        <p class="mt-2 text-sm text-slate-400">
+          {{ isEditMode ? 'Make changes to your publication and update it.' : 'Share your technological expertise with the world.' }}
+        </p>
+      </div>
+ 
+      @if (errorMessage) {
+        <div class="mb-6 rounded-lg border border-error/20 bg-error/5 p-4 text-sm text-error flex items-start space-x-3">
+          <span class="material-symbols-outlined text-[20px] text-error shrink-0">error</span>
+          <span>{{ errorMessage }}</span>
+        </div>
+      }
+ 
+      <form [formGroup]="postForm" (ngSubmit)="onSubmit()" class="space-y-8 relative z-10">
+ 
+        <div>
+          <label class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-3">Post Status</label>
+          <div class="grid grid-cols-2 gap-4 max-w-sm">
+            <button
+              type="button"
+              (click)="setStatus('DRAFT')"
+              [class]="getStatus() === 'DRAFT'
+                ? 'flex items-center justify-center space-x-2 rounded-lg bg-amber-500/10 border-2 border-amber-500/40 py-3 font-semibold text-amber-500 dark:text-amber-500 shadow-sm cursor-pointer transition-all'
+                : 'flex items-center justify-center space-x-2 rounded-lg bg-slate-950/60 border border-slate-850/80 py-3 text-slate-400 hover:text-slate-200 cursor-pointer hover:bg-slate-850 transition-all'"
+            >
+              <span class="h-2 w-2 rounded-full bg-amber-500"></span>
+              <span>Draft</span>
+            </button>
+            <button
+              type="button"
+              (click)="setStatus('PUBLISHED')"
+              [class]="getStatus() === 'PUBLISHED'
+                ? 'flex items-center justify-center space-x-2 rounded-lg bg-primary/10 border-2 border-primary/40 py-3 font-semibold text-primary dark:text-primary shadow-sm cursor-pointer transition-all'
+                : 'flex items-center justify-center space-x-2 rounded-lg bg-slate-950/60 border border-slate-850/80 py-3 text-slate-400 hover:text-slate-200 cursor-pointer hover:bg-slate-850 transition-all'"
+            >
+              <span class="h-2 w-2 rounded-full bg-primary"></span>
+              <span>Published</span>
+            </button>
+          </div>
+        </div>
+ 
+        <div>
+          <label for="title" class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">Post Title</label>
+          <input
+            type="text"
+            id="title"
+            formControlName="title"
+            placeholder="e.g., Advanced Dependency Injection Guide in Angular 19"
+            class="block w-full rounded-lg border border-slate-800/80 bg-slate-950/40 py-3 px-4 text-base sm:text-lg text-slate-200 placeholder-slate-500 outline-none focus:border-primary focus:bg-slate-950/70 focus:ring-2 focus:ring-primary/20 transition-all"
+          />
+        </div>
+ 
+        <!-- Cover Image Upload Section -->
+        <div>
+          <label class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">Cover Image</label>
+          <div class="flex flex-col sm:flex-row items-start sm:items-center gap-4 mb-3 p-4 rounded-xl border border-slate-850/80 bg-slate-950/40">
+            <div class="h-20 w-36 rounded-lg overflow-hidden border border-slate-800 bg-slate-900 flex items-center justify-center shrink-0 shadow-inner">
+              @if (postForm.get('postImage')?.value) {
+                <img [src]="postForm.get('postImage')?.value" alt="Cover preview" class="h-full w-full object-cover" />
+              } @else {
+                <span class="material-symbols-outlined text-slate-500 text-3xl">image</span>
+              }
+            </div>
+            <div class="text-xs">
+              <p class="font-bold text-slate-200">Upload cover image</p>
+              <p class="text-slate-400 mt-0.5">It will be automatically resized and compressed via Canvas.</p>
+              <label class="mt-2 inline-flex items-center gap-1 text-primary hover:text-secondary cursor-pointer font-bold select-none">
+                <span class="material-symbols-outlined text-[16px]">upload</span>
+                Select image file
+                <input class="hidden" type="file" (change)="onFileSelected($event)" accept="image/*" />
+              </label>
+            </div>
+          </div>
+        </div>
+ 
+        <div>
+          <label for="content" class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">Post Body</label>
+          <app-wysiwyg-editor
+            id="content"
+            formControlName="content"
+            class="block text-slate-200"
+          ></app-wysiwyg-editor>
+        </div>
+ 
+        <div>
+          <div class="flex items-center justify-between mb-2">
+            <label for="category" class="block text-xs font-bold uppercase tracking-wider text-slate-400">Category</label>
+            <button
+              type="button"
+              (click)="showNewCategoryInput = !showNewCategoryInput"
+              class="text-xs text-primary hover:text-secondary font-bold cursor-pointer bg-transparent border-none"
+            >
+              {{ showNewCategoryInput ? 'Cancel' : '+ New Category' }}
+            </button>
+          </div>
+ 
+          @if (showNewCategoryInput) {
+            <div class="mb-3 p-3 rounded-lg border border-slate-850/80 bg-slate-950/60 flex items-center space-x-3">
+              <input
+                type="text"
+                name="newCategoryName"
+                [(ngModel)]="newCategoryName"
+                [ngModelOptions]="{standalone: true}"
+                placeholder="Category name (e.g., DevOps)"
+                class="flex-1 rounded border border-slate-800 bg-slate-900 px-3 py-1.5 text-xs text-slate-200 placeholder-slate-500 outline-none focus:border-primary"
+              />
+              <button
+                type="button"
+                (click)="onCreateCategory()"
+                [disabled]="!newCategoryName.trim() || isSaving"
+                class="rounded bg-primary hover:bg-secondary text-white text-xs font-bold px-4 py-1.5 disabled:opacity-50 cursor-pointer border-none"
+              >
+                Create
+              </button>
+            </div>
+          }
+ 
+          <select
+            id="category"
+            formControlName="categoryId"
+            class="block w-full rounded-lg border border-slate-800/80 bg-slate-950/40 py-2.5 px-4 text-sm text-slate-300 placeholder-slate-500 outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all cursor-pointer"
+          >
+            <option value="" disabled selected>Select a category</option>
+            @for (cat of categories; track cat.id) {
+              <option [value]="cat.id" class="bg-slate-900 text-slate-200">{{ cat.name }}</option>
+            }
+          </select>
+        </div>
+ 
+        <div>
+          <div class="flex items-center justify-between mb-3">
+            <label class="block text-xs font-bold uppercase tracking-wider text-slate-400">Topic Tags (Multi-select)</label>
+            <button
+              type="button"
+              (click)="showNewTagInput = !showNewTagInput"
+              class="text-xs text-primary hover:text-secondary font-bold cursor-pointer bg-transparent border-none"
+            >
+              {{ showNewTagInput ? 'Cancel' : '+ New Tags' }}
+            </button>
+          </div>
+ 
+          @if (showNewTagInput) {
+            <div class="mb-4 p-3 rounded-lg border border-slate-850/80 bg-slate-950/60 flex items-center space-x-3">
+              <input
+                type="text"
+                name="newTagName"
+                [(ngModel)]="newTagName"
+                [ngModelOptions]="{standalone: true}"
+                placeholder="Names separated by commas (e.g., Docker, Kubernetes)"
+                class="flex-1 rounded border border-slate-800 bg-slate-900 px-3 py-1.5 text-xs text-slate-200 placeholder-slate-500 outline-none focus:border-primary"
+              />
+              <button
+                type="button"
+                (click)="onCreateTag()"
+                [disabled]="!newTagName.trim() || isSaving"
+                class="rounded bg-primary hover:bg-secondary text-white text-xs font-bold px-4 py-1.5 disabled:opacity-50 cursor-pointer border-none"
+              >
+                Create
+              </button>
+            </div>
+          }
+ 
+          <div class="flex flex-wrap gap-2 p-4 rounded-xl border border-slate-850/80 bg-slate-950/40 max-h-40 overflow-y-auto">
+            @for (tag of tags; track tag.id) {
+              <button
+                type="button"
+                (click)="toggleTag(tag.id)"
+                [class]="isTagSelected(tag.id)
+                  ? 'inline-flex items-center rounded-full bg-primary/20 border-2 border-primary/45 px-3.5 py-1 text-xs font-bold text-primary shadow-sm cursor-pointer transition-all'
+                  : 'inline-flex items-center rounded-full bg-slate-800/50 border border-slate-700/60 px-3.5 py-1 text-xs font-semibold text-slate-300 hover:text-slate-100 hover:border-slate-650 cursor-pointer transition-all'"
+              >
+                <span>#{{ tag.name }}</span>
+                @if (isTagSelected(tag.id)) {
+                  <span class="ml-1.5 text-primary font-bold">&times;</span>
+                }
+              </button>
+            } @empty {
+              <p class="text-xs text-slate-500 italic">No tags available. Create one using the link above.</p>
+            }
+          </div>
+        </div>
+ 
+        <div class="pt-6 border-t border-slate-800/60 flex flex-col-reverse sm:flex-row items-center justify-end gap-4">
+ 
+          <a
+            [routerLink]="isEditMode ? ['/posts', postId] : ['/posts']"
+            class="w-full sm:w-auto inline-flex h-11 items-center justify-center rounded-lg border border-slate-800 bg-slate-950/60 px-6 text-sm font-semibold text-slate-400 hover:bg-slate-850 hover:text-slate-200 transition-all text-center cursor-pointer"
+          >
+            Cancel
+          </a>
+ 
+          <button
+            type="submit"
+            [disabled]="isSaving || postForm.invalid"
+            class="relative w-full sm:w-auto inline-flex h-11 items-center justify-center rounded-lg btn-gradient px-8 text-sm font-bold text-white shadow-lg shadow-primary/20 hover:scale-[1.01] active:scale-[0.99] disabled:opacity-50 disabled:pointer-events-none transition-all cursor-pointer border-none"
+          >
+            @if (isSaving) {
+              <span class="flex items-center space-x-2">
+                <span class="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent shrink-0"></span>
+                <span>Saving Post...</span>
+              </span>
+            } @else {
+              <span>{{ isEditMode ? 'Save Changes' : (getStatus() === 'DRAFT' ? 'Save as Draft' : 'Publish Post') }}</span>
+            }
+          </button>
+ 
+        </div>
+ 
+      </form>
+ 
+    </div>
+  }
+ 
+</div>

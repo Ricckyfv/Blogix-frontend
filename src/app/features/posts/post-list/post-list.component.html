@@ -1,0 +1,366 @@
+<!-- Main Page Loading Skeleton (only on very first load before sidebar exists) -->
+@if (isLoading && categories.length === 0) {
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-8 py-8 animate-pulse">
+    @for (i of [1, 2, 3]; track i) {
+      <div class="rounded-xl border border-slate-800/60 bg-slate-900/40 p-6 space-y-4 shadow-sm">
+        <div class="h-40 rounded-lg bg-slate-800/80"></div>
+        <div class="h-4 w-24 rounded bg-slate-800/80"></div>
+        <div class="h-6 w-3/4 rounded bg-slate-800/80"></div>
+        <div class="h-4 w-full rounded bg-slate-800/80"></div>
+      </div>
+    }
+  </div>
+} @else {
+
+  <!-- Active filters display -->
+  @if (selectedCategory || selectedTag) {
+    <div class="flex flex-wrap items-center justify-between gap-4 p-4 rounded-xl border border-slate-800/80 bg-slate-900/60 backdrop-blur-md shadow-sm mb-6 animate-fade-in">
+      <div class="flex items-center space-x-3">
+        <span class="text-xs font-bold uppercase text-slate-400">Active Filters:</span>
+        <div class="flex flex-wrap gap-2">
+          @if (selectedCategory) {
+            <span class="inline-flex items-center rounded-full bg-primary/15 px-3 py-1 text-xs font-semibold text-primary border border-primary/20">
+              Category: {{ getCategoryName(selectedCategory) }}
+              <button (click)="filterByCategory(selectedCategory)" class="ml-2 hover:text-secondary cursor-pointer font-bold bg-transparent border-none text-sm">&times;</button>
+            </span>
+          }
+          @if (selectedTag) {
+            <span class="inline-flex items-center rounded-full bg-secondary/15 px-3 py-1 text-xs font-semibold text-secondary border border-secondary/20">
+              Tag: #{{ selectedTag }}
+              <button (click)="filterByTag(selectedTag)" class="ml-2 hover:text-primary cursor-pointer font-bold bg-transparent border-none text-sm">&times;</button>
+            </span>
+          }
+        </div>
+      </div>
+      <button (click)="clearFilters()" class="text-xs font-bold text-primary hover:text-secondary transition-colors cursor-pointer border-none bg-transparent">
+        Clear All
+      </button>
+    </div>
+  }
+
+  <!-- BENTO GRID HERO FEATURED SECTION -->
+  @if (!isDraftsView && !isMyPostsView && !selectedCategory && !selectedTag && posts.length >= 3 && !isPostsLoading) {
+    <section class="grid grid-cols-1 md:grid-cols-12 gap-8 mb-12">
+      <!-- Main Featured Post (Left: 8 cols) -->
+      <div [routerLink]="['/posts', posts[0].id]"
+           class="md:col-span-8 bg-slate-900 rounded-xl border border-slate-800/60 overflow-hidden card-shadow relative group cursor-pointer flex flex-col justify-end min-h-[420px] md:min-h-[480px]">
+        <img [src]="getPostImage(posts[0])"
+             [alt]="posts[0].title"
+             class="absolute inset-0 w-full h-full px-6 object-contain transition-transform duration-500 group-hover:scale-[1.03]" />
+
+        <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent"></div>
+        <div class="relative z-10 p-6 md:p-8 glass-panel m-4 md:m-6 rounded-lg border border-white/10 bg-slate-950/60 backdrop-blur-md">
+          <div class="flex gap-2 mb-3">
+            <span class="bg-primary/20 text-white font-bold text-[10px] uppercase tracking-wider px-3 py-1 rounded-full backdrop-blur-sm border border-primary/30">
+              {{ posts[0].category.name }}
+            </span>
+          </div>
+          <h2 class="font-display-xl text-xl md:text-2xl font-bold text-white mb-2 leading-tight group-hover:text-primary transition-colors">
+            {{ posts[0].title }}
+          </h2>
+          <p class="font-body-md text-xs md:text-sm text-slate-300 line-clamp-2 mb-4 leading-relaxed"
+             [innerHTML]="posts[0].content.replace('<p>', '').slice(0, 180) + '...'">
+          </p>
+          <div class="flex items-center justify-between text-slate-400 font-semibold text-[11px] uppercase tracking-wider">
+            <div class="flex items-center gap-3">
+              <span class="flex items-center gap-1">
+                <span class="material-symbols-outlined text-[14px]">schedule</span>
+                {{ posts[0].readingTime }} min
+              </span>
+              <span>•</span>
+              <span>{{ posts[0].createdAt | date:'mediumDate' }}</span>
+            </div>
+            <span class="font-bold flex items-center gap-0.5 text-slate-200 group-hover:text-primary transition-colors">Read more <span class="material-symbols-outlined text-[12px]">arrow_forward</span></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Side Featured Posts (Right: 4 cols) -->
+      <div class="md:col-span-4 flex flex-col gap-6">
+
+        <div [routerLink]="['/posts', posts[1].id]"
+             class="flex flex-col bg-slate-900/40 rounded-2xl border border-slate-800/60 overflow-hidden shadow-lg group cursor-pointer transition-all duration-300 hover:-translate-y-1">
+
+          <div class="h-32 w-full overflow-hidden relative shrink-0 bg-slate-950 flex items-center justify-center p-2">
+            <img [src]="getPostImage(posts[1])"
+                 [alt]="posts[1].title"
+                 class="max-w-full max-h-full object-contain rounded-md transition-transform duration-500 group-hover:scale-102" />
+          </div>
+
+          <div class="p-4 flex flex-col justify-between flex-grow bg-slate-900/20">
+            <div>
+              <span class="inline-block bg-secondary/15 text-secondary font-bold text-[9px] uppercase tracking-wider px-2.5 py-1 rounded-full mb-2 border border-secondary/20">
+                {{ posts[1].category.name }}
+              </span>
+              <h3 class="font-bold text-sm text-slate-100 mb-1 leading-snug group-hover:text-primary transition-colors line-clamp-2">
+                {{ posts[1].title }}
+              </h3>
+            </div>
+
+            <div class="flex items-center justify-between text-slate-400 font-semibold text-[10px] mt-3 pt-2 border-t border-slate-800/40">
+              <div class="flex items-center gap-2">
+                @if (posts[1].author.profileImage) {
+                  <img [src]="posts[1].author.profileImage" alt="Author" class="w-5 h-5 rounded-full object-cover border border-primary/25" />
+                } @else {
+                  <div class="w-5 h-5 rounded-full bg-secondary/15 text-secondary flex items-center justify-center font-bold uppercase text-[9px]">
+                    {{ posts[1].author.name.charAt(0) }}
+                  </div>
+                }
+                <span class="text-slate-300 font-medium">{{ posts[1].author.name }}</span>
+              </div>
+              <span class="text-primary font-bold">{{ posts[1].readingTime }} min</span>
+            </div>
+          </div>
+        </div>
+
+        <div [routerLink]="['/posts', posts[2].id]"
+             class="flex flex-col bg-slate-900/40 rounded-2xl border border-slate-800/60 overflow-hidden shadow-lg group cursor-pointer transition-all duration-300 hover:-translate-y-1">
+
+          <div class="h-32 w-full overflow-hidden relative shrink-0 bg-slate-950 flex items-center justify-center p-2">
+            <img [src]="getPostImage(posts[2])"
+                 [alt]="posts[2].title"
+                 class="max-w-full max-h-full object-contain rounded-md transition-transform duration-500 group-hover:scale-102" />
+          </div>
+
+          <div class="p-4 flex flex-col justify-between flex-grow bg-slate-900/20">
+            <div>
+              <span class="inline-block bg-primary/10 text-primary font-bold text-[9px] uppercase tracking-wider px-2.5 py-1 rounded-full mb-2 border border-primary/20">
+                {{ posts[2].category.name }}
+              </span>
+              <h3 class="font-bold text-sm text-slate-100 mb-1 leading-snug group-hover:text-primary transition-colors line-clamp-2">
+                {{ posts[2].title }}
+              </h3>
+            </div>
+
+            <div class="flex items-center justify-between text-slate-400 font-semibold text-[10px] mt-3 pt-2 border-t border-slate-800/40">
+              <div class="flex items-center gap-2">
+                @if (posts[2].author.profileImage) {
+                  <img [src]="posts[2].author.profileImage" alt="Author" class="w-5 h-5 rounded-full object-cover border border-primary/25" />
+                } @else {
+                  <div class="w-5 h-5 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold uppercase text-[9px]">
+                    {{ posts[2].author.name.charAt(0) }}
+                  </div>
+                }
+                <span class="text-slate-300 font-medium">{{ posts[2].author.name }}</span>
+              </div>
+              <span class="text-primary font-bold">{{ posts[2].readingTime }} min</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+  }
+
+  <!-- Main Feed Area: Posts list & Sidebar -->
+  <div class="grid grid-cols-1 gap-8 lg:grid-cols-12 items-start">
+
+    <!-- Left: Posts Grid -->
+    <div class="lg:col-span-8">
+      <div class="flex items-center justify-between mb-6">
+        <h2 class="font-headline-lg text-xl font-bold text-slate-200">
+          {{ isDraftsView
+              ? 'Your Drafts'
+              : isMyPostsView
+                ? 'My Posts'
+                : ((selectedCategory || selectedTag) ? 'Filtered Posts' : 'Recent Posts') }}
+        </h2>
+      </div>
+
+      @if (errorMessage) {
+        <!-- Error State -->
+        <div class="rounded-xl border border-error/20 bg-error/5 p-8 text-center my-6">
+          <span class="material-symbols-outlined text-error text-5xl mb-3">error</span>
+          <h3 class="text-lg font-bold text-slate-200 mb-2">Error loading content</h3>
+          <p class="text-slate-400 text-sm mb-6">{{ errorMessage }}</p>
+          <button (click)="loadPosts()" class="inline-flex h-10 items-center justify-center rounded-full btn-gradient px-6 text-sm font-semibold text-white shadow-sm cursor-pointer">
+            Retry
+          </button>
+        </div>
+      } @else if (isPostsLoading) {
+        <!-- Light Skeleton Loader over the post list -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 animate-pulse">
+          @for (i of [1, 2, 3, 4, 5, 6]; track i) {
+            <div class="rounded-2xl border border-slate-800/60 bg-slate-900/20 p-5 space-y-4 shadow-sm h-full flex flex-col justify-between min-h-[380px]">
+              <div class="h-48 rounded-2xl bg-slate-800/50 w-full"></div>
+              <div class="space-y-3 flex-grow pt-4">
+                <div class="h-3.5 w-16 rounded bg-slate-850"></div>
+                <div class="h-5 w-3/4 rounded bg-slate-850"></div>
+                <div class="h-3 w-full rounded bg-slate-850"></div>
+                <div class="h-3 w-5/6 rounded bg-slate-850"></div>
+              </div>
+              <div class="flex justify-between items-center pt-4 border-t border-slate-850">
+                <div class="h-3 w-20 rounded bg-slate-850"></div>
+                <div class="h-6 w-6 rounded-full bg-slate-850"></div>
+              </div>
+            </div>
+          }
+        </div>
+      } @else if (posts.length === 0) {
+        <!-- Empty State -->
+        <div class="rounded-xl border border-slate-800/80 bg-slate-900/40 p-12 text-center shadow-sm">
+          <span class="material-symbols-outlined text-slate-500 text-6xl mb-4">description_off</span>
+          <h3 class="text-xl font-bold text-slate-200 mb-2">No posts found</h3>
+          <p class="text-slate-400 text-sm max-w-md mx-auto mb-6">
+            {{ isDraftsView
+              ? "You do not have any drafts in progress at the moment. Create one now!"
+              : isMyPostsView
+                ? "You haven't published any posts yet. Share your first article with the community!"
+                : "No posts match these criteria. Try selecting other filters or write your own article." }}
+          </p>
+          <div class="flex justify-center gap-4">
+            @if (selectedCategory || selectedTag) {
+              <button (click)="clearFilters()" class="inline-flex h-10 items-center justify-center rounded-full border border-slate-800 px-5 text-sm font-semibold text-slate-300 hover:bg-slate-850 transition-all cursor-pointer bg-slate-900">
+                Clear Filters
+              </button>
+            }
+            @if (authService.currentUser$ | async) {
+              <a routerLink="/posts/create" class="inline-flex h-10 items-center justify-center rounded-full btn-gradient px-6 text-sm font-semibold text-white cursor-pointer">
+                Write Post
+              </a>
+            }
+          </div>
+        </div>
+      } @else {
+        <!-- Dynamic flexible grid container -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 animate-fade-in">
+          <!-- Loop over posts -->
+          @for (post of posts; track post.id; let idx = $index) {
+            @if (isDraftsView || isMyPostsView || selectedCategory || selectedTag || posts.length < 3 || idx >= 3) {
+              <article [routerLink]="['/posts', post.id]"
+                       class="group cursor-pointer flex flex-col h-full transition-all duration-300 hover:-translate-y-1">
+                <!-- Cover Image Header -->
+                <div class="h-48 w-full overflow-hidden rounded-t-2xl relative bg-slate-950 flex items-center justify-center p-3 border-b border-slate-800/40">
+                  <img [src]="getPostImage(post)"
+                       [alt]="post.title"
+                       class="max-w-full max-h-full object-contain rounded-md transition-transform duration-300 group-hover:scale-102" />
+                  @if (post.status === 'DRAFT') {
+                    <span class="absolute top-3 left-3 bg-secondary/90 text-white font-bold text-[9px] uppercase tracking-wider px-2 py-0.5 rounded-full shadow-sm z-10">
+                      Draft
+                    </span>
+                  }
+                </div>
+
+                <!-- Content Body -->
+                <div class="p-5 bg-slate-900/40 border-x border-b border-slate-800/60 rounded-b-2xl flex flex-col flex-grow">
+                  <!-- Category minimalist badge -->
+                  <div class="flex flex-wrap gap-2 mb-3">
+                    <span class="bg-primary/10 text-primary font-bold text-[9px] uppercase tracking-wider px-2.5 py-1 rounded-full border border-primary/20">
+                      {{ post.category.name }}
+                    </span>
+                  </div>
+
+                  <!-- Title with contrast -->
+                  <h3 class="text-slate-100 font-bold hover:text-primary transition-colors leading-snug line-clamp-2 text-base mb-2">
+                    {{ post.title }}
+                  </h3>
+
+                  <p class="font-body-md text-xs text-slate-400 mb-4 flex-grow line-clamp-2 leading-relaxed"
+                     [innerHTML]="sanitizeHtml(post.content)">
+                  </p>
+
+                  <!-- Footer -->
+                  <div class="flex items-center justify-between mt-auto pt-4 border-t border-slate-800/40 text-slate-400 font-semibold text-[10px]">
+                    <div class="flex items-center gap-1.5">
+                      <span class="material-symbols-outlined text-[13px] text-slate-500">calendar_month</span>
+                      <span>{{ post.createdAt | date:'mediumDate' }}</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                      <span class="text-slate-300 font-medium text-xs">{{ post.author.name }}</span>
+                      @if (post.author.profileImage) {
+                        <img [src]="post.author.profileImage" alt="Author" class="w-6 h-6 rounded-full object-cover border border-primary/25" />
+                      } @else {
+                        <div class="w-6 h-6 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold uppercase text-[10px] border border-primary/20">
+                          {{ post.author.name.charAt(0) }}
+                        </div>
+                      }
+                    </div>
+                  </div>
+                </div>
+              </article>
+            }
+          }
+        </div>
+      }
+    </div>
+
+    <!-- Right: Sidebar Filters -->
+    <aside class="lg:col-span-4 space-y-6">
+      <!-- Categories Filter Widget (Translucent Dark Card) -->
+      <div class="bg-slate-900/60 backdrop-blur-md rounded-xl border border-slate-800/80 p-6 shadow-xl text-slate-200">
+        <h3 class="text-sm font-bold uppercase tracking-wider text-slate-200 mb-4 flex items-center justify-between">
+          <span>Categories</span>
+          @if (selectedCategory) {
+            <button (click)="filterByCategory(null)" class="text-xs text-primary hover:text-secondary font-bold cursor-pointer bg-transparent border-none">Clear</button>
+          }
+        </h3>
+        <div class="space-y-1.5">
+          @for (category of categories; track category.id) {
+            <button (click)="filterByCategory(category.name)"
+                    [class]="(selectedCategory === category.name || selectedCategory === category.id)
+                      ? 'flex w-full items-center justify-between rounded-lg bg-primary/20 border border-primary/45 px-3.5 py-2 text-left text-xs font-bold text-primary transition-all cursor-pointer'
+                      : 'flex w-full items-center justify-between rounded-lg border border-transparent hover:border-slate-800 hover:bg-slate-800/40 px-3.5 py-2 text-left text-xs font-semibold text-slate-400 hover:text-slate-200 transition-all cursor-pointer'">
+              <span>{{ category.name }}</span>
+              @if (category.postCount !== undefined) {
+                <span [class]="(selectedCategory === category.name || selectedCategory === category.id)
+                  ? 'rounded-full bg-primary/25 px-2 py-0.5 text-[9px] text-primary font-bold border border-primary/20'
+                  : 'rounded-full bg-slate-800 border border-slate-700/50 px-2 py-0.5 text-[9px] text-slate-400 font-bold'">
+                  {{ category.postCount }}
+                </span>
+              }
+            </button>
+          }
+        </div>
+      </div>
+
+      <!-- Tags Cloud Widget (Translucent Dark Card) -->
+      <div class="bg-slate-900/60 backdrop-blur-md rounded-xl border border-slate-800/80 p-6 shadow-xl text-slate-200">
+        <h3 class="text-sm font-bold uppercase tracking-wider text-slate-200 mb-4 flex items-center justify-between">
+          <span>Popular Tags</span>
+          @if (selectedTag) {
+            <button (click)="filterByTag(null)" class="text-xs text-primary hover:text-secondary font-bold cursor-pointer bg-transparent border-none">Clear</button>
+          }
+        </h3>
+        <div class="flex flex-wrap gap-2">
+          @for (tag of tags; track tag.id) {
+            <button (click)="filterByTag(tag.name)"
+                    [class]="selectedTag === tag.name
+                      ? 'inline-flex items-center rounded-full bg-secondary/20 border border-secondary/45 px-3.5 py-1.5 text-[10px] font-bold text-secondary shadow-sm transition-all cursor-pointer'
+                      : 'inline-flex items-center rounded-full bg-slate-800/50 border border-slate-700/50 hover:border-primary/40 px-3.5 py-1.5 text-[10px] font-semibold text-slate-300 hover:text-slate-100 hover:scale-[1.03] transition-all cursor-pointer'">
+              #{{ tag.name }}
+            </button>
+          }
+        </div>
+      </div>
+
+      <!-- Write Card Quick Info -->
+      @if (authService.currentUser$ | async) {
+        <div class="relative overflow-hidden rounded-xl border border-slate-800 bg-gradient-to-br from-primary/15 to-secondary/5 p-6 shadow-sm">
+          <div class="absolute -right-12 -bottom-12 h-32 w-32 rounded-full bg-primary/10 blur-xl"></div>
+          <h4 class="text-sm font-bold text-slate-200 mb-2">Got a great idea?</h4>
+          <p class="text-xs text-slate-400 leading-relaxed mb-4">
+            Draft and share your technical thoughts today with the LUCID community.
+          </p>
+          <a routerLink="/posts/create" class="inline-flex w-full h-10 items-center justify-center rounded-full btn-gradient text-xs font-bold text-white hover:scale-[1.02] active:scale-[0.98] transition-all cursor-pointer shadow-md shadow-primary/25">
+            Start writing
+          </a>
+        </div>
+      } @else {
+        <!-- Login Callout Widget (Translucent Dark Card) -->
+        <div class="bg-slate-900/60 backdrop-blur-md rounded-xl border border-slate-800/80 p-6 text-center shadow-xl text-slate-200">
+          <h4 class="text-sm font-bold text-slate-200 mb-2">Join the community!</h4>
+          <p class="text-xs text-slate-400 mb-4 leading-relaxed">
+            Log in to publish posts, save drafts, or manage your contributions on LUCID.
+          </p>
+          <a routerLink="/login" class="inline-flex w-full h-10 items-center justify-center rounded-full border border-slate-800 hover:bg-slate-850 text-xs font-semibold text-slate-300 transition-all cursor-pointer mb-2">
+            Log In to My Account
+          </a>
+          <a routerLink="/register" class="inline-flex w-full h-10 items-center justify-center rounded-full btn-gradient text-xs font-bold text-white transition-all cursor-pointer">
+            Register for Free
+          </a>
+        </div>
+      }
+    </aside>
+
+  </div>
+}
