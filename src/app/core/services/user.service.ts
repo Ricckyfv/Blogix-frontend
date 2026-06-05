@@ -1,27 +1,26 @@
 import { inject, Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Author } from '../models/types';
+import { ApiService } from './api.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class UserService {
-  private http = inject(HttpClient);
-  private apiUrl = 'http://localhost:8080/api/v1/users/me';
+  private apiService = inject(ApiService);
 
   // GET /api/v1/users/me
   getMyProfile(): Observable<Author> {
-    return this.http.get<Author>(this.apiUrl);
+    return this.apiService.get<Author>('/users/me');
   }
 
   // PUT /api/v1/users/me
   updateProfile(profileData: Author): Observable<Author> {
-    return this.http.put<Author>(this.apiUrl, profileData);
+    return this.apiService.put<Author>('/users/me', profileData);
   }
 
   // DELETE /api/v1/users/me
   deleteAccount(): Observable<void> {
-    return this.http.delete<void>(this.apiUrl);
+    return this.apiService.delete<void>('/users/me');
   }
 }

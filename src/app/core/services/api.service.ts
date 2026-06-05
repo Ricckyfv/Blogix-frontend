@@ -2,13 +2,14 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams, HttpErrorResponse } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
+import { environment } from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ApiService {
   private http = inject(HttpClient);
-  private readonly baseUrl = 'http://localhost:8080/api/v1';
+  private readonly baseUrl = environment.apiUrl;
 
   private formatErrors(error: HttpErrorResponse): Observable<never> {
     console.error('API Error:', error);
