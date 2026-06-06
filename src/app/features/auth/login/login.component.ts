@@ -20,6 +20,8 @@ export class LoginComponent implements OnInit {
   isLoading = false;
   errorMessage = '';
 
+  private isGoogleInitialized = false;
+
   ngOnInit(): void {
     this.loginForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
@@ -30,10 +32,20 @@ export class LoginComponent implements OnInit {
 
   initGoogleSSO(retries = 0): void {
     if (typeof google !== 'undefined') {
-      google.accounts.id.initialize({
-        client_id: '799849990519-iq2kqh4lguasovp9n48mclj8n9u7noa5.apps.googleusercontent.com',
-        callback: (response: any) => this.handleGoogleCredentialResponse(response)
-      });
+
+      if(!this.isGoogleInitialized) {
+        google.accounts.id.initialize({
+          client_id: '799849990519-iq2kqh4lguasovp9n48mclj8n9u7noa5.apps.googleusercontent.com',
+          callback: (response: any) => this.handleGoogleCredentialResponse(response)
+        });
+
+        this.isGoogleInitialized = true;
+      }
+
+      // google.accounts.id.initialize({
+      //   client_id: '799849990519-iq2kqh4lguasovp9n48mclj8n9u7noa5.apps.googleusercontent.com',
+      //   callback: (response: any) => this.handleGoogleCredentialResponse(response)
+      // });
 
       google.accounts.id.renderButton(
         document.getElementById('google-btn-container'),
@@ -41,6 +53,7 @@ export class LoginComponent implements OnInit {
           theme: 'filled_dark',
           size: 'large',
           text: 'continue_with',
+          // text: 'signin_with',
           width: 376,
           shape: 'rectangular'
         }

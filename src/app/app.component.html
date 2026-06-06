@@ -1,3 +1,5 @@
+<div class="flex flex-col min-h-screen">
+
 <!-- Translucent Fixed Header -->
 <header (click)="closeDropdowns()" class="fixed top-0 left-0 w-full z-50 bg-slate-950/75 backdrop-blur-md border-b border-slate-800/80 shadow-sm shadow-primary/5 transition-all duration-200">
   <div class="mx-auto flex h-20 max-w-screen-xl items-center justify-between px-6 md:px-8 relative">
@@ -247,20 +249,24 @@
 </header>
 
 <!-- Main Area Container -->
-<main class="min-h-[calc(100vh-5rem-12rem)] pt-28 pb-12 bg-background text-on-background transition-colors duration-200">
-  <div class="mx-auto max-w-7xl px-6 md:px-8">
-    <router-outlet />
-  </div>
-</main>
-
-<!-- Footer -->
-<footer class="border-t border-slate-900 bg-slate-950 py-10 text-slate-400 transition-colors duration-200">
-  <div class="mx-auto max-w-7xl flex flex-col items-center justify-center px-6 md:px-8 text-center gap-4">
-    <div class="flex flex-col items-center justify-center">
-      <span class="font-bold text-lg text-primary animate-pulse">Blogix</span>
-      <p class="text-xs text-slate-500 mt-1">
-        &copy; 2026 Blogix. All rights reserved.
-      </p>
+  <main class="flex-grow pt-28 pb-12 bg-background text-on-background transition-colors duration-200">
+    <div class="mx-auto max-w-7xl px-6 md:px-8">
+      <router-outlet />
     </div>
-  </div>
-</footer>
+  </main>
+
+  <footer class="border-t border-slate-900 bg-slate-950 py-10 text-slate-400 transition-colors duration-200">
+    <div class="mx-auto max-w-7xl flex flex-col items-center justify-center px-6 md:px-8 text-center gap-4">
+      <div class="flex flex-col items-center justify-center">
+        <span class="font-bold text-lg text-primary animate-pulse">Blogix</span>
+        <p class="text-xs text-slate-500 mt-1">
+          &copy; 2026 Blogix. Desarrollado por
+          <a href="https://www.ricardofernandezv.com/" target="_blank" rel="noopener noreferrer" class="font-semibold text-slate-300 hover:text-primary transition-colors">
+                RiickyDev
+          </a>
+        </p>
+      </div>
+    </div>
+  </footer>
+
+</div>

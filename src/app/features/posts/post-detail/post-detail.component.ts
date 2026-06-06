@@ -176,7 +176,6 @@ export class PostDetailComponent implements OnInit {
 
     if (navigator.share) {
       navigator.share(shareData)
-        .then(() => console.log('Successful share'))
         .catch((error) => {
           console.log('Error sharing', error);
           // Fallback to clipboard if share was cancelled or failed but we still want to copy

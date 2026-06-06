@@ -6,6 +6,13 @@ La interfaz está construida con un alto foco en la experiencia de usuario (UX),
 
 ---
 
+## 🔗 Enlaces del Proyecto
+
+* 🚀 **Demo en Vivo:** [https://blogix-frontend.vercel.app](https://blogix-frontend.vercel.app)
+* ⚙️ **Repositorio del Backend (API):** [https://github.com/Ricckyfv/Blogix-backend](https://github.com/Ricckyfv/Blogix-backend)
+
+---
+
 ## ✨ Características de Diseño y UX
 
 - **Modo Oscuro Permanente**: Gama cromática basada en paletas oscuras HSL (`slate-900`, `slate-950`), bordes sutiles y efectos de traslucidez (*glassmorphism*).
