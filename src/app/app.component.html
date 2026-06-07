@@ -270,3 +270,15 @@
   </footer>
 
 </div>
+
+@if (loadingService.isLoading$ | async) {
+  <div class="fixed inset-0 bg-black/70 flex flex-col justify-center items-center z-[9999] p-5 text-center">
+
+    <div class="animate-spin rounded-full h-14 w-14 border-4 border-white/30 border-l-blue-500 mb-5"></div>
+
+    <p class="text-white font-sans max-w-md text-lg leading-relaxed antialiased">
+      {{ loadingService.loadingMessage$ | async }}
+    </p>
+
+  </div>
+}

@@ -1,21 +1,24 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { RouterOutlet, RouterLink, RouterLinkActive, Router } from '@angular/router';
-import { AsyncPipe } from '@angular/common';
+import { AsyncPipe, CommonModule } from '@angular/common';
 import { AuthService } from './core/services/auth.service';
 import { UserService } from './core/services/user.service';
+import { LoadingService } from './core/services/loading.service';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, RouterLink, RouterLinkActive, AsyncPipe],
+  imports: [RouterOutlet, RouterLink, RouterLinkActive, AsyncPipe, CommonModule],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'
 })
 export class AppComponent implements OnInit {
+
+  constructor(public loadingService: LoadingService) {}
+
   private router = inject(Router);
   public authService = inject(AuthService);
   private userService = inject(UserService);
-
   // States
   isMobileMenuOpen = false;
   isProfileDropdownOpen = false;
