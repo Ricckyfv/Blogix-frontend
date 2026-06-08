@@ -101,7 +101,7 @@ export class RegisterComponent implements OnInit {
     this.authService.register(registerData).subscribe({
       next: () => {
         this.isLoading = false;
-        this.router.navigate(['/login']);
+        this.router.navigate(['/posts']);
       },
       error: (err) => {
         this.isLoading = false;
