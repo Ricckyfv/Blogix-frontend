@@ -34,33 +34,39 @@
     <article class="relative overflow-hidden rounded-xl border border-slate-800/80 bg-slate-900/60 p-6 sm:p-10 shadow-2xl backdrop-blur-md text-slate-200">
 
       <!-- Action Panel for Authenticated Session Users and Readers -->
-      <div class="flex items-center justify-end space-x-3 mb-6 p-3 rounded-lg border border-slate-850/80 bg-slate-950/40">
+       <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6 p-3 sm:p-4 rounded-lg border border-slate-850/80 bg-slate-950/40">
+
         @if (authService.isAuthenticated() && authService.getCurrentUserId() === post.author.id) {
-          <span class="text-xs font-bold text-slate-400 mr-auto pl-2 flex items-center gap-1">
+          <span class="w-full sm:w-auto flex items-center justify-center sm:justify-start gap-1 text-xs font-bold text-slate-400">
             <span class="material-symbols-outlined text-[15px] text-primary">shield_person</span>
-            Post Management:
+            Post Management
           </span>
-
-          <a [routerLink]="['/posts/edit', post.id]" class="inline-flex h-8 items-center justify-center rounded-full border border-primary/50 text-primary px-4 text-xs font-bold hover:bg-primary-container/10 transition-all cursor-pointer">
-            Edit
-          </a>
-
-          <button (click)="onDeleteRequested()" class="inline-flex h-8 items-center justify-center rounded-full bg-error text-white px-4 text-xs font-bold hover:scale-[1.02] active:scale-[0.98] transition-all cursor-pointer border-none">
-            Delete
-          </button>
         } @else {
-          <span class="text-xs font-bold text-slate-400 mr-auto pl-2 flex items-center gap-1">
+          <span class="w-full sm:w-auto flex items-center justify-center sm:justify-start gap-1 text-xs font-bold text-slate-400">
             <span class="material-symbols-outlined text-[15px] text-primary">article</span>
-            Blogix Reader View
+            Reader View
           </span>
         }
 
-        <!-- Share Button -->
-        <button (click)="onShare()"
-                class="inline-flex h-8 items-center justify-center rounded-full bg-slate-800/40 border border-slate-700/60 text-slate-300 hover:text-primary hover:border-primary px-4 text-xs font-bold hover:scale-[1.02] active:scale-[0.98] transition-all cursor-pointer border-none">
-          <span class="material-symbols-outlined text-[16px] mr-1">share</span>
-          Share
-        </button>
+        <div class="flex items-center gap-2 sm:gap-3 w-full sm:w-auto">
+
+          @if (authService.isAuthenticated() && authService.getCurrentUserId() === post.author.id) {
+            <a [routerLink]="['/posts/edit', post.id]" class="flex-1 sm:flex-none inline-flex h-8 items-center justify-center rounded-full border border-primary/50 text-primary px-3 sm:px-4 text-xs font-bold hover:bg-primary-container/10 transition-all cursor-pointer">
+              Edit
+            </a>
+
+            <button (click)="onDeleteRequested()" class="flex-1 sm:flex-none inline-flex h-8 items-center justify-center rounded-full bg-error text-white px-3 sm:px-4 text-xs font-bold hover:scale-[1.02] active:scale-[0.98] transition-all cursor-pointer border-none">
+              Delete
+            </button>
+          }
+
+          <!-- Share Button -->
+          <button (click)="onShare()" class="flex-1 sm:flex-none inline-flex h-8 items-center justify-center rounded-full bg-slate-800/40 border border-slate-700/60 text-slate-300 hover:text-primary hover:border-primary px-3 sm:px-4 text-xs font-bold hover:scale-[1.02] active:scale-[0.98] transition-all cursor-pointer border-none">
+            <span class="material-symbols-outlined text-[16px] mr-1">share</span>
+            Share
+          </button>
+
+        </div>
       </div>
 
       <!-- Cover Image Header -->

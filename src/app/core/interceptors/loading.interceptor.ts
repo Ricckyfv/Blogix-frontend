@@ -10,7 +10,7 @@ export const loadingInterceptor: HttpInterceptorFn = (req: HttpRequest<unknown>,
 
   const timeoutId = setTimeout(() => {
     loadingService.updateMessage(
-      'El servidor gratuito está despertando. Esto puede tardar entre 30 y 50 segundos debido a la inactividad inicial. Gracias por tu paciencia.'
+      'El servidor gratuito está despertando. Esto puede tardar entre 2 y 3 minutos debido a la inactividad inicial. Gracias por tu paciencia.'
     );
   }, 4000);
 
