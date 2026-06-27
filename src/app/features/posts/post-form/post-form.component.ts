@@ -50,7 +50,7 @@ export class PostFormComponent implements OnInit {
 
     this.postForm = this.fb.group({
       title: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(200)]],
-      content: ['', [Validators.required, Validators.minLength(10)]],
+      content: ['', [Validators.required]],
       categoryId: ['', [Validators.required]],
       tagIds: [[] as string[]],
       status: ['PUBLISHED', [Validators.required]],
@@ -71,7 +71,7 @@ export class PostFormComponent implements OnInit {
       next: (res) => {
         this.categories = res.categories;
         this.tags = res.tags;
-        
+
         if (this.isEditMode && this.postId) {
           this.loadExistingPost(this.postId);
         } else {
@@ -133,7 +133,7 @@ export class PostFormComponent implements OnInit {
   // Inline Category Creator
   onCreateCategory(): void {
     if (!this.newCategoryName.trim()) return;
-    
+
     this.isSaving = true;
     this.categoryService.createCategory(this.newCategoryName.trim()).subscribe({
       next: (newCat) => {
@@ -156,7 +156,7 @@ export class PostFormComponent implements OnInit {
 
     this.isSaving = true;
     const tagNames = this.newTagName.trim().split(',').map(name => name.trim()).filter(Boolean);
-    
+
     this.tagService.createTags(tagNames).subscribe({
       next: (newTags) => {
         newTags.forEach(t => {
